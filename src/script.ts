@@ -1,14 +1,14 @@
 // utility functions
-function randint(min, max) {
+function randint(min: number, max: number): number {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function move(image, x, y) {
-    image.style.left = x;
-    image.style.top = y;
+function move(image: SVGElement, x: number, y: number): void {
+    image.style.left = `${x}px`;
+    image.style.top = `${y}px`;
 }
 
-function getDimensions(image) {
+function getDimensions(image: SVGElement): [number, number] {
     let width = image.getAttribute("width");
     let height = image.getAttribute("height");
 
@@ -24,16 +24,14 @@ function getDimensions(image) {
         return [300, 150]; // default dimensions for SVG
     }
 
-    viewbox = viewbox.split(" ");
+    const viewboxParts = viewbox.split(" ");
+    width = viewboxParts[2];
+    height = viewboxParts[3];
 
-    // TODO: add the offsets of min-x and min-y to the width & height
-    width = parseInt(viewbox[2]);
-    height = parseInt(viewbox[3]);
-
-    return [width, height];
+    return [parseInt(width), parseInt(height)];
 }
 
-function changeDirection(index, value) {
+function changeDirection(index: number, value: number): void {
     direction[index] = value;
 
     // check if color randomization is enabled and if the direction changed
@@ -43,15 +41,15 @@ function changeDirection(index, value) {
 }
 
 // functions for getting the logo
-function getLogoURL() {
+function getLogoURL(): string {
     if (!params.has("logo")) {
-        return "/logos/default.svg"
+        return "/logos/default.svg";
     }
     
-    return params.get("logo");
+    return params.get("logo")!;
 }
 
-function getLogo(url) {
+function getLogo(url: string): SVGElement {
     const request = new XMLHttpRequest();
     const parser = new DOMParser();
     
@@ -66,13 +64,13 @@ function getLogo(url) {
         return getLogo("/logos/default.svg");
     }
     
-    let image = parser.parseFromString(request.responseText, "text/html");
+    const doc = parser.parseFromString(request.responseText, "text/html");
 
-    if (image.querySelector("parsererror")) {
+    if (doc.querySelector("parsererror")) {
         return getLogo("/logos/default.svg");
     }
     
-    image = image.querySelector("svg");
+    const image = doc.querySelector("svg");
 
     if (image == null) {
         return getLogo("/logos/default.svg");
@@ -94,7 +92,7 @@ const params = new URLSearchParams(window.location.search);
 const logo = getLogo(getLogoURL());
 const dimensions = getDimensions(logo);
 
-const initialColor = params.has("initialColor") ? params.get("initialColor") : "white";
+const initialColor = params.has("initialColor") ? params.get("initialColor")! : "white";
 let randomizeColor = true;
 
 // if the option is defined and is equal to `false`
@@ -102,13 +100,13 @@ if (params.has("randomizeColor") && (params.get("randomizeColor") == "false" || 
     randomizeColor = false;
 }
 
-const speed = params.has("speed") ? params.get("speed") : 1;
+const speed = params.has("speed") ? parseFloat(params.get("speed")!) : 1;
 
 // variables
 let x = randint(1, window.innerWidth - dimensions[0] - 1);
 let y = randint(1, window.innerHeight - dimensions[1] - 1);
 
-let direction = [1, 1];
+let direction: [number, number] = [1, 1];
 
 // set the ID and the fill color to the logo
 logo.id = "dvd-logo";
@@ -142,4 +140,4 @@ setInterval(() => {
 
     // move the logo to the current X and Y coords
     move(logo, x, y);
-});
+}, 16);
