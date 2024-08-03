@@ -1,0 +1,32 @@
+# Node.js dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+out/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Compiled JavaScript files
+*.js
+*.js.map
+
+# Environment variables
+.env
+
+# Local configuration files
+*.local
+*.log
+
+# Environment variables
+.env
+
+# Local configuration files
+*.local
+*.log
+
+# IDEs and editors
+.vscode/
+
