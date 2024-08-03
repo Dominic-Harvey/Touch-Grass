@@ -6,7 +6,7 @@ let y_speed;
 let dvd;
 
 function preload() {
-  dvd = loadImage("test.png");
+  newImage();
 }
 
 function setup() {
@@ -35,5 +35,13 @@ function draw() {
 }
 
 function newImage() {
-    // set dvd to a new random image from the server?
+  fetch('/images')
+    .then(response => response.blob())
+    .then(blob => {
+      dvd = createImg(URL.createObjectURL(blob));
+      dvd.hide();
+    })
+    .catch(error => {
+      console.error('Error fetching new image:', error);
+    });
 }
